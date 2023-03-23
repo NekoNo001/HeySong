@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:rxdart/rxdart.dart';
 
 ButtonStyle buttonStyle = ElevatedButton.styleFrom(
   primary: Colors.white,
@@ -65,6 +66,12 @@ class _SonglistState extends State<Songlist>{
     });
   }
 
+  Stream<DurationState> get _durationStateStream =>
+      Rx.combineLatest2<Duration, Duration?, DurationState >(
+          _player.positionStream, _player.durationStream, (position,duration) => DurationState(
+          position: position,total: duration?? Duration.zero
+      ));
+
   @override
   void initState() {
     super.initState();
@@ -75,13 +82,91 @@ class _SonglistState extends State<Songlist>{
         _updateCurretPlayingList(index);
       }
     }
-    )
+    );
+
   }
 
 
 
   @override
   Widget build(BuildContext context) {
+    if(isPlayerViewVisible){
+      return Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.pink.shade300,
+                  Colors.pink.shade100
+                ],
+              )
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Container(
+              child:Column(
+                children: [Container(
+                  margin: EdgeInsets.only(top: 50, left: 10, right: 10, bottom: 50),
+                  child: Stack(
+                    children: [Center(
+                      child: QueryArtworkWidget(
+                          id: songs[currentIndex].id,
+                          type: ArtworkType.AUDIO,
+                          artworkBorder: BorderRadius.circular(10),
+                          artworkHeight: 400,
+                          artworkWidth: 400,
+                          artworkQuality: FilterQuality.high)),
+                      Positioned(
+                        bottom: 10,
+                        left: 0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Color.fromRGBO(255, 86, 139, 0.5)
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                    margin: EdgeInsets.all(5),
+                                        child: Text(songs[currentIndex].title,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20
+                                        ))),
+                                  ],
+                                )),
+                            Container(
+                                margin: EdgeInsets.only(left: 10,bottom: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Color.fromRGBO(255, 86, 139, 0.5)
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.all(5),
+                                        child: Text(songs[currentIndex].artist ?? '',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                            ))),
+                                  ],
+                                ))
+                          ],
+                        ),
+                      ),
+                      ],
+                  ),
+                )],
+              ),),
+          ));}
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -230,7 +315,6 @@ class _SonglistState extends State<Songlist>{
                           margin: EdgeInsets.only(top: 15,right: 10,left: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-
                             children: [
                               Text(snapshot.data![index].title,
                                 overflow: TextOverflow.ellipsis,
