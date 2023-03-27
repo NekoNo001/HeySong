@@ -4,6 +4,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gif/gif.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
@@ -26,7 +27,7 @@ class _CustomAppBar extends StatelessWidget with PreferredSizeWidget{
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      leading: const Icon(Icons.grid_view_rounded),
+      leading: const Icon(Icons.music_note_outlined,),
     );
   }
 
@@ -42,14 +43,17 @@ class Songlist extends StatefulWidget{
   final String title;
 
 
+
   @override
   State<StatefulWidget> createState() => _SonglistState();
 
 }
 
-class _SonglistState extends State<Songlist>{
+class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
   final OnAudioQuery _audioQuery = OnAudioQuery();
   final AudioPlayer _player = AudioPlayer();
+  late final GifController controller;
+
 
   List<SongModel> songs = [];
   String currentSongTitle = '';
@@ -72,6 +76,7 @@ class _SonglistState extends State<Songlist>{
 
   @override
   void initState() {
+    controller = GifController(vsync: this);
     super.initState();
     requestPermission();
     _player.currentIndexStream.listen((index){
@@ -158,7 +163,7 @@ class _SonglistState extends State<Songlist>{
                                       ],
                                     )),
                                 Container(
-                                    margin: EdgeInsets.only(left: 5            ,bottom: 10),
+                                    margin: EdgeInsets.only(left: 5  ,bottom: 10),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
                                         color: Color.fromRGBO(255, 86, 139, 0.5)
@@ -267,7 +272,7 @@ class _SonglistState extends State<Songlist>{
                                 ),
                               ),
                                 Padding(
-                                  padding: EdgeInsets.all(10),
+                                  padding: EdgeInsets.only(left: 10,right: 10),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     mainAxisSize: MainAxisSize.max,
@@ -283,45 +288,64 @@ class _SonglistState extends State<Songlist>{
                             ,);
                         },
                       )),
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: ButtonBar(
-                        alignment: MainAxisAlignment.center,
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 327.2,
+                      padding: EdgeInsets.all(0),
+                      child: Stack(
                         children: [
-                          Container(
-                            width: 60,
-                            height: 60,
-                            child: ElevatedButton(onPressed: (){ _player.seekToPrevious();},style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()), child: Icon(Icons.skip_previous_rounded,color: Colors.pink,),),),
-                          Container(
-                            width: 90,
-                            height: 90,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if(_player.playing){
-                                  _player.pause();
-                                }else if(_player != null){
-                                  _player.play();
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()),
-                              child: StreamBuilder<bool>(
-                                stream: _player.playingStream,
-                                builder: (context, snapshot){
-                                  bool? playing = snapshot.data;
-                                  if(playing != null && playing){
-                                    return const Icon(Icons.pause,color: Colors.pink,);
-                                  }
-                                  return const Icon(Icons.play_arrow,color: Colors.pink,);
-                                },
-                              ),
-                            )),
-                          Container(
-                            width: 60,
-                            height: 60,
-                            child: ElevatedButton(onPressed: (){_player.seekToNext();},style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()), child: Icon(Icons.skip_next_rounded,color: Colors.pink,),),),
+                          Positioned(
+                            top: 110,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Image(image: AssetImage(
+                                  'assets/gif.gif'
+                                )),
+                            ),
+                          ),
+                          Positioned(
+                            child:Container(
+                              margin: EdgeInsets.only(top: 40),
+                              child: ButtonBar(
+                              alignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  child: ElevatedButton(onPressed: (){ _player.seekToPrevious();},style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()), child: Icon(Icons.skip_previous_rounded,color: Colors.pink,),),),
+                                Container(
+                                    width: 90,
+                                    height: 90,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        if(_player.playing){
+                                          _player.pause();
+                                        }else if(_player != null){
+                                          _player.play();
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()),
+                                      child: StreamBuilder<bool>(
+                                        stream: _player.playingStream,
+                                        builder: (context, snapshot){
+                                          bool? playing = snapshot.data;
+                                          if(playing != null && playing){
+                                            return const Icon(Icons.pause,color: Colors.pink,);
+                                          }
+                                          return const Icon(Icons.play_arrow,color: Colors.pink,);
+                                        },
+                                      ),
+                                    )),
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  child: ElevatedButton(onPressed: (){_player.seekToNext();},style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()), child: Icon(Icons.skip_next_rounded,color: Colors.pink,),),),
+                              ],
+                          ),
+                            ),)
                         ],
                       ),
-                    )
+                    ),
                     ],
                 ),),
             ),
@@ -356,28 +380,6 @@ class _SonglistState extends State<Songlist>{
                       .headline5!
                       .copyWith(fontWeight: FontWeight.bold),),
                 const SizedBox(height: 20.0,),
-                TextFormField(
-                  maxLength: 50,
-                  style: Theme
-                      .of(context)
-                      .textTheme.bodyMedium!.copyWith(color : Colors.grey.shade700),
-                  decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Nhập tên bài hát',
-                      hintStyle: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Colors.grey.shade700),
-                      prefixIcon: Icon(Icons.search,color: Colors.grey.shade700),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          borderSide: BorderSide.none
-                      ),
-                      counterText:''
-                  ),
-                ),
-                const SizedBox(height: 10.0,),
                 ButtonBar(
                   alignment: MainAxisAlignment.start,
                   buttonPadding: EdgeInsets.zero,
