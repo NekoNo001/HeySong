@@ -10,7 +10,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
 ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-  primary: Colors.white,
+  primary: Color.fromRGBO(255,222,169,1),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(20),
   ),
@@ -27,7 +27,13 @@ class _CustomAppBar extends StatelessWidget with PreferredSizeWidget{
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      leading: const Icon(Icons.music_note_outlined,),
+      leading: Container(
+        padding: EdgeInsets.all(5),
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(Color.fromRGBO(255,222,169,1), BlendMode.modulate),
+          child: const Image(image: AssetImage("assets/kleeIcon2.png")),
+        ),
+      )
     );
   }
 
@@ -66,7 +72,6 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
     });
   }
 
-
   Stream<DurationState> get _durationStateStream =>
       Rx.combineLatest2<Duration, Duration?, DurationState >(
           _player.positionStream, _player.durationStream, (position,duration) => DurationState(
@@ -96,8 +101,8 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.pink.shade300,
-                  Colors.pink.shade100
+                  Colors.red.shade700,
+                  Colors.red.shade100
                 ],
               )
           ),
@@ -127,7 +132,14 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                             artworkBorder: BorderRadius.circular(10),
                             artworkHeight: 400,
                             artworkWidth: 400,
-                            artworkQuality: FilterQuality.high)),
+                            artworkQuality: FilterQuality.high,
+                            nullArtworkWidget: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                              child: Image(
+                                image: AssetImage('assets/kleeSticker1.png'),
+                                fit: BoxFit.fill,
+                              ),
+                            ))),
                         Positioned(
                           bottom: 10,
                           left: 0,
@@ -141,7 +153,7 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                   margin: EdgeInsets.all(5),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
-                                      color: Color.fromRGBO(255, 86, 139, 0.5)
+                                      color: Color.fromRGBO(192, 44, 34, 0.5)
                                     ),
                                     child: Column(
                                       children: [
@@ -166,7 +178,7 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                     margin: EdgeInsets.only(left: 5  ,bottom: 10),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: Color.fromRGBO(255, 86, 139, 0.5)
+                                        color: Color.fromRGBO(192, 44, 34, 0.5)
                                     ),
                                     child: Column(
                                       children: [
@@ -209,11 +221,11 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                 stream: _player.loopModeStream,
                                 builder: (context, snapshot){
                                   if (_player.loopMode == LoopMode.all){
-                                    return Icon(Icons.repeat_outlined,color: Colors.pink,);
+                                    return Icon(Icons.repeat_outlined,color: Colors.redAccent,);
                                   } else if (_player.loopMode == LoopMode.one){
-                                    return Icon(Icons.repeat_one,color: Colors.pink,);}
+                                    return Icon(Icons.repeat_one,color: Colors.redAccent,);}
                                   else{
-                                    return Icon(Icons.highlight_off_outlined,color: Colors.pink,);
+                                    return Icon(Icons.highlight_off_outlined,color: Colors.redAccent,);
                                   }
                                 },
                               )),
@@ -234,10 +246,10 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                 builder: (context, snapshot) {
                                   if (!_player.shuffleModeEnabled) {
                                     return Icon(
-                                      Icons.arrow_forward_outlined, color: Colors.pink,);
+                                      Icons.arrow_forward_outlined, color: Colors.redAccent,);
                                   } else {
                                     return Icon(Icons.shuffle,
-                                      color: Colors.pink,);
+                                      color: Colors.redAccent,);
                                   }
                                 })),
                           ],
@@ -262,7 +274,7 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                   total: total,
                                   barHeight: 10,
                                   progressBarColor: Colors.white,
-                                  thumbColor: Colors.pink.shade100,
+                                  thumbColor: Color.fromRGBO(255,222,169,1),
                                   timeLabelTextStyle: const TextStyle(
                                     fontSize: 0,
                                   ),
@@ -312,7 +324,7 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                 Container(
                                   width: 60,
                                   height: 60,
-                                  child: ElevatedButton(onPressed: (){ _player.seekToPrevious();},style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()), child: Icon(Icons.skip_previous_rounded,color: Colors.pink,),),),
+                                  child: ElevatedButton(onPressed: (){ _player.seekToPrevious();},style: ElevatedButton.styleFrom(backgroundColor: Color.fromRGBO(255,222,169,1),shape: CircleBorder()), child: Icon(Icons.skip_previous_rounded,color: Colors.redAccent,),),),
                                 Container(
                                     width: 90,
                                     height: 90,
@@ -324,22 +336,22 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                           _player.play();
                                         }
                                       },
-                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()),
+                                      style: ElevatedButton.styleFrom(backgroundColor: Color.fromRGBO(255,222,169,1),shape: CircleBorder()),
                                       child: StreamBuilder<bool>(
                                         stream: _player.playingStream,
                                         builder: (context, snapshot){
                                           bool? playing = snapshot.data;
                                           if(playing != null && playing){
-                                            return const Icon(Icons.pause,color: Colors.pink,);
+                                            return const Icon(Icons.pause,color: Colors.redAccent,);
                                           }
-                                          return const Icon(Icons.play_arrow,color: Colors.pink,);
+                                          return const Icon(Icons.play_arrow,color: Colors.redAccent,);
                                         },
                                       ),
                                     )),
                                 Container(
                                   width: 60,
                                   height: 60,
-                                  child: ElevatedButton(onPressed: (){_player.seekToNext();},style: ElevatedButton.styleFrom(backgroundColor: Colors.white,shape: CircleBorder()), child: Icon(Icons.skip_next_rounded,color: Colors.pink,),),),
+                                  child: ElevatedButton(onPressed: (){_player.seekToNext();},style: ElevatedButton.styleFrom(backgroundColor: Color.fromRGBO(255,222,169,1),shape: CircleBorder()), child: Icon(Icons.skip_next_rounded,color: Colors.redAccent,),),),
                               ],
                           ),
                             ),)
@@ -356,8 +368,8 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.pink.shade300,
-              Colors.pink.shade100
+              Colors.red.shade700,
+              Colors.red.shade100
             ],
           )
       ),
@@ -395,7 +407,7 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                       _player.play();
                     },
                       style: buttonStyle,
-                      child: Icon(Icons.shuffle_sharp,color: Colors.pink,),
+                      child: Icon(Icons.shuffle_sharp,color: Colors.redAccent,),
                     ),
                     const SizedBox(width: 10.0,),
                     ElevatedButton (onPressed: (){
@@ -408,7 +420,7 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                       _player.play();
                     },
                       style: buttonStyle,
-                      child: Icon(Icons.play_arrow,color : Colors.pink,),),
+                      child: Icon(Icons.play_arrow,color : Colors.redAccent,),),
                   ],
                 ),
                 const SizedBox(height: 10.0,),
@@ -417,7 +429,148 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                       .textTheme
                       .headline6!
                       .copyWith(fontWeight: FontWeight.bold),),
-                showlistSong()
+                Expanded(
+                  child: Stack(
+                      children : [
+                        Container(
+                          child: showlistSong()),
+                        Positioned(
+                          bottom: 5,
+                            child:StreamBuilder<int?>(
+                              stream: _player.currentIndexStream,
+                              builder: (context, snapshot) {
+                                print("curret: " + snapshot.data.toString());
+                                if (snapshot.data != null) {
+                                  return GestureDetector(
+                                      onTap: () async{
+                                        _changePlayerView();
+                                      },
+                                    child: Center(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: Color.fromRGBO(
+                                              178, 72, 40, 1.0),
+                                        ),
+                                        width: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width-20,
+                                        height: 110,
+                                        child: Container(
+                                          child: Row(
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.all(10),
+                                                  child: QueryArtworkWidget(
+                                                      id: songs[currentIndex].id,
+                                                      type: ArtworkType.AUDIO,
+                                                      artworkWidth: 80,
+                                                      artworkHeight: 80,
+                                                      artworkBorder: BorderRadius.circular(10),
+                                                      artworkQuality: FilterQuality.high,
+                                                      nullArtworkWidget: ClipRRect(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        child: Image(
+                                                          image: AssetImage('assets/kleeSticker1.png'),
+                                                          fit: BoxFit.fill,
+                                                        ),
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(top: 5),
+                                                  child: Flexible(
+                                                    child: Container(
+                                                      width: MediaQuery.of(context).size.width/2 + 60,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                        Text(songs[currentIndex].title,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 18)),
+                                                        Text(songs[currentIndex].artist ?? " ",
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 15)),
+                                                          StreamBuilder<DurationState> (
+                                                            stream: _durationStateStream,
+                                                            builder: (context, snapshot){
+                                                              final durationState = snapshot.data;
+                                                              final process  = durationState?.position ?? Duration.zero;
+                                                              final total = durationState?.total ?? Duration.zero;
+                                                              return Center(
+                                                                child: Column(
+                                                                  children: [
+                                                                    Container(
+                                                                      padding: EdgeInsets.only(top: 2),
+                                                                      child: ProgressBar(
+                                                                        progress: process,
+                                                                        total: total,
+                                                                        barHeight: 5,
+                                                                        thumbRadius: 5,
+                                                                        progressBarColor: Colors.white,
+                                                                        thumbColor: Color.fromRGBO(255,222,169,1),
+                                                                        timeLabelTextStyle: const TextStyle(
+                                                                          fontSize: 0,
+                                                                        ),
+                                                                        onSeek: (duration){
+                                                                          _player.seek(duration);
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                                ,);
+                                                            },
+                                                          ),
+                                                          ButtonBar(
+                                                            alignment: MainAxisAlignment.spaceEvenly,
+                                                            buttonPadding: EdgeInsets.zero,
+                                                            children: [
+                                                              Container(
+                                                                child: ElevatedButton(onPressed: (){ _player.seekToPrevious();},style: buttonStyle, child: Icon(Icons.skip_previous_rounded,color: Colors.redAccent,),),),
+                                                              Container(
+                                                                  child: ElevatedButton(
+                                                                    onPressed: () {
+                                                                      if(_player.playing){
+                                                                        _player.pause();
+                                                                      }else if(_player != null){
+                                                                        _player.play();
+                                                                      }
+                                                                    },
+                                                                    style: buttonStyle,
+                                                                    child: StreamBuilder<bool>(
+                                                                      stream: _player.playingStream,
+                                                                      builder: (context, snapshot){
+                                                                        bool? playing = snapshot.data;
+                                                                        if(playing != null && playing){
+                                                                          return const Icon(Icons.pause,color: Colors.redAccent,);
+                                                                        }
+                                                                        return const Icon(Icons.play_arrow,color: Colors.redAccent,);
+                                                                      },
+                                                                    ),
+                                                                  )),
+                                                              Container(
+                                                                child: ElevatedButton(onPressed: (){_player.seekToNext();},style: buttonStyle, child: Icon(Icons.skip_next_rounded,color: Colors.redAccent,),),),
+                                                            ],
+                                                          )
+                                                      ]),
+                                                    ),
+                                                  ),
+                                                )
+                                              ]
+                                          ),
+                                        ),
+                                      ),
+                                    ),);
+                                  }else return Container();
+                              }))
+                      ],
+                  ),
+                ),
                 ],
             )
           )));
@@ -458,16 +611,16 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                 String durationString = duration != null
                     ? '${(duration.inMinutes % 60).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}'
                     : '';
-                return GestureDetector(
-                  onTap: () async{
-                    _changePlayerView();
-                    await _player.setAudioSource(
-                      createPlaylist(songs),
-                      initialIndex: index
-                    );
-                    _player.play();
-                  },
-                  child: Container(
+                  return GestureDetector(
+                    onTap: () async{
+                      _changePlayerView();
+                      await _player.setAudioSource(
+                        createPlaylist(songs),
+                        initialIndex: index
+                      );
+                      _player.play();
+                    },
+                    child: Container(
                     height:90,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
@@ -482,6 +635,12 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                             artworkBorder: BorderRadius.circular(10.0),
                             id: songs[index].id,
                             type: ArtworkType.AUDIO,
+                            nullArtworkWidget: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image(
+                                  image: AssetImage('assets/kleeSticker1.png'),
+                                  fit: BoxFit.fill,
+                                )),
                           )
                       ),
                         Flexible(child:
@@ -535,14 +694,14 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
   }
 
   void _updateCurretPlayingList(int index) {
-    if(isPlayerViewVisible) {
-      setState(() {
-        if (songs.isNotEmpty) {
-          currentSongTitle = songs[index].title;
-          currentIndex = index;
-        }
-      });
-    }
+      if(isPlayerViewVisible){
+        setState(() {
+        });
+      }
+      if (songs.isNotEmpty) {
+        currentSongTitle = songs[index].title;
+        currentIndex = index;
+      }
   }
 }
 
