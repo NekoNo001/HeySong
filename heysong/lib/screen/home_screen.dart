@@ -8,6 +8,7 @@ import 'package:gif/gif.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 ButtonStyle buttonStyle = ElevatedButton.styleFrom(
   primary: Color.fromRGBO(255,222,169,1),
@@ -88,6 +89,9 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
       if(index != null){
         _updateCurretPlayingList(index);
       }
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ));
     }
     );
   }
@@ -461,6 +465,8 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                           child: Row(
                                               children: [
                                                 Container(
+                                                  width:80,
+                                                  height: 80,
                                                   margin: EdgeInsets.all(10),
                                                   child: QueryArtworkWidget(
                                                       id: songs[currentIndex].id,
@@ -485,11 +491,14 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
                                                       child: Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
-                                                        Text(songs[currentIndex].title,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 18)),
+                                                        Container(
+                                                          height: 25,
+                                                          child: Text(songs[currentIndex].title,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 18)),
+                                                        ),
                                                         Text(songs[currentIndex].artist ?? " ",
                                                               overflow: TextOverflow.ellipsis,
                                                               style: TextStyle(
@@ -688,7 +697,15 @@ class _SonglistState extends State<Songlist> with TickerProviderStateMixin{
   ConcatenatingAudioSource createPlaylist(List<SongModel>? song) {
     List<AudioSource> source = [];
     for (var song in songs){
-      source.add(AudioSource.uri(Uri.parse(song.uri!)));
+      source.add(AudioSource.uri(Uri.parse(song.uri!),
+          tag: MediaItem(
+            // Specify a unique ID for each media item:
+            id: song.id.toString(),
+            // Metadata to display in the notification:
+            artist: song.artist,
+            title: song.title,
+          ),
+      ));
     }
     return ConcatenatingAudioSource(children: source);
   }
